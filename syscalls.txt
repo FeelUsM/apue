@@ -1,0 +1,499 @@
+<unistd.h>
+//STDIN_FILENO
+//STDOUT_FILENO
+//STDERR_FILENO
+//дескрипторы файлов [0..OPEN_MAX) примерно 20..64
+
+
+				arg		return
+F_DUPFD			dest	dest	dup/dup2
+F_DUPFD_CLOEXEC	dest	dest	dup/dup2 + FD_CLOEXEC
+-------
+F_GETFD					result	флагов дескриптора	
+F_SETFD			arg				доступен только FD_CLOEXEC
+-------
+F_GETFL					result	флагов состояния файла
+								взаимоисключающие: O_RDONLY, O_WRONLY, O_RDWR, O_EXEC и O_SEARCH - маска O_ACCMODE
+F_SETFL			arg				Изменить можно только флаги O_APPEND, O_NONBLOCK, O_SYNC, O_DSYNC, O_RSYNC, O_FSYNC и O_ASYNC
+-------
+F_GETOWN				result	идентификатор процесса или группы процессов, которые в настоящее время получают сигналы SIGIO и SIGURG
+F_SETOWN		arg				+ id процесса - id группы
+-------
+F_GETLK							блокировки на отдельную запись в файле
+F_SETLK
+F_SETLKW		
+
+
+mode_t	st_mode; /* тип файла и режим (права доступа) */
+ino_t	st_ino; /* номер индексного узла */
+dev_t	st_dev; /* номер устройства (файловой системы) */
+dev_t	st_rdev; /* номер устройства для специальных файлов */
+nlink_t	st_nlink; /* количество ссылок */
+uid_t	st_uid; /* идентификатор пользователя владельца */
+gid_t	st_gid; /* идентификатор группы владельца */
+off_t	st_size; /* размер в байтах, для обычных файлов */
+struct timespec st_atim; /* время последнего обращения к файлу */
+struct timespec st_mtim; /* время последнего изменения файла */
+struct timespec st_ctim; /* время последнего изменения состояния файла */
+blksize_t st_blksize; /* оптимальный размер блока ввода/вывода */
+blkcnt_t st_blocks; /* количество занятых дисковых блоков *
+
+
+			comp_t 		Счетчик тактов в упакованном виде (раздел 8.14)
+long v = (c & 0x1fff) << (((c >> 13) & 0x7) * 3);
+			dev_t 		Номер устройства (старший и младший, раздел 4.24)
+dev_t makedev(unsigned int maj, unsigned int min)	unsigned int major(dev_t dev);       unsigned int minor(dev_t dev);
+???			fd_set 		Набор файловых дескрипторов (раздел 14.4.1)
+
+(double)	clock_t		Счетчик тактов системных часов (время работы процесса, раздел 1.10)
+long		time_t 		Счетчик секунд календарного времени (раздел 1.10)
+int/short	wchar_t 	Может представлять символы в любой кодировке
+
+unsigned long	size_t 	Размер объекта (например, строки) (без знака) (раздел 3.7)
+long		ssize_t 	Возвращаемый функциями результат, представляющий счетчик байтов (со знаком) (read, write, раздел 3.7)
+long		ptrdiff_t 	Разность двух указателей (со знаком)
+long		fpos_t 		Позиция в файле (раздел 5.10)
+long		off_t 		Размер файла и смещение в файле (со знаком) (lseek, раздел 3.6)
+int			gid_t 		Числовой идентификатор группы
+int			uid_t 		Числовой идентификатор пользователя
+int			pid_t 		Числовой идентификатор процесса и идентификатор группы процессов (со знаком, разделы 8.2 и 9.4)
+int			pthread_t 	Числовой идентификатор потока выполнения (раздел 11.3)
+int			ino_t 		Номер индексного узла (i-node, раздел 4.14)
+int			nlink_t 	Счетчик ссылок для записей в каталоге (раздел 4.14)
+
+int(rwx)	mode_t 		Тип файла, режим создания файла (раздел 4.5)
+unsigned	rlim_t 		Предельное значение для ресурса (раздел 7.11)
+int			sig_atomic_t Тип данных, доступ к которому может выполняться атомарно (раздел 10.15)
+sig(?)sigset_t Набор сигналов (раздел 10.11)
+
+
+
+
+не ядро:
+<stdio.h>
+<ftw.h>
+<dirent.h> кроме readdir()
+----------------------------------------------------
+	3.3
+open(2)		1_0	
+openat(2)	2_6_16	
+	3.4
+creat(2)	1_0	
+	3.5
+close(2)	1_0	
+	3.6
+lseek(2)	1_0	
+_llseek(2)	1_2	
+	3.7
+read(2)		1_0	
+	3.8
+write(2)	1_0	
+	3.11
+preadv(2)	2_6_30	
+pwritev(2)	2_6_30	
+pread64(2)		добавлен под именем «pread» в 2_2 переименован в «pread64» в 2_6
+pwrite64(2)		добавлен под именем «pwrite» в 2_2 переименован в «pwrite64» в 2_6
+	3.12
+dup(2)	1_0	
+dup2(2)	1_0	
+	3.13
+sync(2)	1_0	
+fsync(2)	1_0	
+fdatasync(2)	2_0	
+	3.14
+fcntl(2)	1_0	
+fcntl64(2)	2_4	
+	3.15
+ioctl(2)	1_0	
+	4.2
+oldstat(2)	1_0	
+oldfstat(2)	1_0	
+oldlstat(2)	1_0	
+stat(2)	1_0	
+fstat(2)	1_0	
+lstat(2)	1_0	
+statfs(2)	1_0	
+fstatfs(2)	1_0	
+stat64(2)	2_4	
+fstat64(2)	2_4	
+lstat64(2)	2_4	
+statfs64(2)	2_6	
+fstatfs64(2)	2_6	
+fstatat64(2)	2_6_16	
+ustat(2)	1_0	
+	4.7
+access(2)	1_0	
+faccessat(2)	2_6_16	
+	4.8
+umask(2)	1_0	
+	4.9
+chmod(2)	1_0	
+fchmod(2)	1_0	
+fchmodat(2)	2_6_16	
+	4.11
+chown(2)	2_2	Смотрите в chown(2) подробности по версии
+fchown(2)	1_0	
+fchownat(2)	2_6_16	
+lchown(2)	1_0	Смотрите в chown(2) подробности по версии
+chown32(2)	2_4	
+fchown32(2)	2_4	
+lchown32(2)	2_4	
+	4.13
+truncate(2)	1_0	
+ftruncate(2)	1_0	
+truncate64(2)	2_4	
+ftruncate64(2)	2_4	
+	4.15
+link(2)	1_0	
+linkat(2)	2_6_16	
+unlink(2)	1_0	
+unlinkat(2)	2_6_16	
+mq_unlink(2)	2_6_6	???
+	4.16
+rename(2)	1_0	
+renameat(2)	2_6_16	
+renameat2(2)	3_15	
+	4.18
+symlink(2)	1_0	
+symlinkat(2)	2_6_16	
+readlink(2)	1_0	
+readlinkat(2)	2_6_16	
+	4.20
+utime(2)	1_0	
+utimes(2)	2_2	
+futimesat(2)	2_6_16	
+utimensat(2)	2_6_22	
+	4.21
+mkdir(2)	1_0	
+mkdirat(2)	2_6_16	
+rmdir(2)	1_0	
+	4.22
+readdir(2)	1_0	
+??? opendir(), closedir(), telldir(), seekdir()
+	4.23
+chdir(2)	1_0	
+fchdir(2)	1_0	
+getcwd(2)	2_2	
+
+
+fork(2)	1_0	
+execve(2)	1_0	
+exit(2)	1_0	
+kill(2)	1_0	
+chroot(2)	1_0	
+acct(2)	1_0	
+adjtimex(2)	1_0	
+alarm(2)	1_0	
+brk(2)	1_0	
+clone(2)	1_0	
+create_module(2)	1_0	удалён в 2_6
+delete_module(2)	1_0	
+get_kernel_syms(2)	1_0	удалён в 2_6
+getegid(2)	1_0	
+geteuid(2)	1_0	
+getgid(2)	1_0	
+getgroups(2)	1_0	
+getitimer(2)	1_0	
+getpgid(2)	1_0	
+getpgrp(2)	1_0	
+getpid(2)	1_0	
+getppid(2)	1_0	
+getpriority(2)	1_0	
+getrlimit(2)	1_0	
+getrusage(2)	1_0	
+gettimeofday(2)	1_0	
+getuid(2)	1_0	
+init_module(2)	1_0	
+ioperm(2)	1_0	
+iopl(2)	1_0	
+ipc(2)	1_0	
+mknod(2)	1_0	
+mmap(2)	1_0	
+modify_ldt(2)	1_0	
+mount(2)	1_0	
+mprotect(2)	1_0	
+munmap(2)	1_0	
+nice(2)	1_0	
+oldolduname(2)	1_0	
+olduname(2)	1_0	
+pause(2)	1_0	
+pipe(2)	1_0	
+ptrace(2)	1_0	
+quotactl(2)	1_0	
+reboot(2)	1_0	
+select(2)	1_0	
+setdomainname(2)	1_0	
+setgid(2)	1_0	
+setgroups(2)	1_0	
+sethostname(2)	1_0	
+setitimer(2)	1_0	
+setpgid(2)	1_0	
+setpriority(2)	1_0	
+setregid(2)	1_0	
+setreuid(2)	1_0	
+setrlimit(2)	1_0	
+setsid(2)	1_0	
+settimeofday(2)	1_0	
+setuid(2)	1_0	
+setup(2)	1_0	удалён в 2_2
+sgetmask(2)	1_0	
+sigaction(2)	1_0	
+signal(2)	1_0	
+sigpending(2)	1_0	
+sigprocmask(2)	1_0	
+sigreturn(2)	1_0	
+sigsuspend(2)	1_0	
+socketcall(2)	1_0	
+ssetmask(2)	1_0	
+stime(2)	1_0	
+swapoff(2)	1_0	
+swapon(2)	1_0	
+sysinfo(2)	1_0	
+syslog(2)	1_0	
+time(2)	1_0	
+times(2)	1_0	
+umount(2)	1_0	
+uname(2)	1_0	
+uselib(2)	1_0	
+vhangup(2)	1_0	
+vm86old(2)	1_0	ранее «vm86»; переименован в 2_0_28/2_2
+wait4(2)	1_0	
+waitpid(2)	1_0	
+-----------------------------------------------------------------------------------
+bdflush(2)	1_2	устарел (ничего не делает) начиная с 2_6
+cacheflush(2)	1_2	не для x86
+personality(2)	1_2	
+setfsgid(2)	1_2	
+setfsuid(2)	1_2	
+sysfs(2)	1_2	
+_newselect(2)	2_0	
+_sysctl(2)	2_0	
+accept(2)	2_0	смотрите замечания по socketcall(2)
+bind(2)	2_0	смотрите замечания по socketcall(2)
+connect(2)	2_0	0
+flock(2)	2_0	
+getdents(2)	2_0	
+getpeername(2)	2_0	смотрите замечания по socketcall(2)
+getpagesize(2)	2_0	не для x86
+getsid(2)	2_0	
+getsockname(2)	2_0	смотрите замечания по socketcall(2)
+getsockopt(2)	2_0	смотрите замечания по socketcall(2)
+listen(2)	2_0	смотрите замечания по socketcall(2)
+mlock(2)	2_0	
+mlockall(2)	2_0	
+mremap(2)	2_0	
+msgctl(2)	2_0	смотрите замечания по ipc(2)
+msgget(2)	2_0	смотрите замечания по ipc(2)
+msgrcv(2)	2_0	смотрите замечания по ipc(2)
+msgsnd(2)	2_0	смотрите замечания по ipc(2)
+msync(2)	2_0	
+munlock(2)	2_0	
+munlockall(2)	2_0	
+nanosleep(2)	2_0	
+readv(2)	2_0	
+recv(2)	2_0	смотрите замечания по socketcall(2)
+recvfrom(2)	2_0	смотрите замечания по socketcall(2)
+recvmsg(2)	2_0	смотрите замечания по socketcall(2)
+sched_get_priority_max(2)	2_0	
+sched_get_priority_min(2)	2_0	
+sched_getparam(2)	2_0	
+sched_getscheduler(2)	2_0	
+sched_rr_get_interval(2)	2_0	
+sched_setparam(2)	2_0	
+sched_setscheduler(2)	2_0	
+sched_yield(2)	2_0	
+semctl(2)	2_0	смотрите замечания по ipc(2)
+semget(2)	2_0	смотрите замечания по ipc(2)
+semop(2)	2_0	смотрите замечания по ipc(2)
+send(2)	2_0	смотрите замечания по socketcall(2)
+sendmsg(2)	2_0	смотрите замечания по socketcall(2)
+sendto(2)	2_0	смотрите замечания по socketcall(2)
+setsockopt(2)	2_0	смотрите замечания по socketcall(2)
+shmat(2)	2_0	смотрите замечания по ipc(2)
+shmctl(2)	2_0	смотрите замечания по ipc(2)
+shmdt(2)	2_0	смотрите замечания по ipc(2)
+shmget(2)	2_0	смотрите замечания по ipc(2)
+shutdown(2)	2_0	смотрите замечания по socketcall(2)
+socket(2)	2_0	смотрите замечания по socketcall(2)
+socketpair(2)	2_0	смотрите замечания по socketcall(2)
+writev(2)	2_0	
+pciconfig_read(2)	2_0_26; 2_2	не в x86
+pciconfig_write(2)	2_0_26; 2_2	не в x86
+vm86(2)	2_0_28; 2_2	
+poll(2)	2_0_36; 2_2	
+capget(2)	2_2	
+capset(2)	2_2	
+getresgid(2)	2_2	
+getresuid(2)	2_2	
+nfsservctl(2)	2_2	удалён в 3_1
+perfctr(2)	2_2	Sparc; удалён в 2_6_34
+prctl(2)	2_2	
+query_module(2)	2_2	удалён в 2_6
+rt_sigaction(2)	2_2	
+rt_sigpending(2)	2_2	
+rt_sigprocmask(2)	2_2	
+rt_sigqueueinfo(2)	2_2	
+rt_sigreturn(2)	2_2	
+rt_sigsuspend(2)	2_2	
+rt_sigtimedwait(2)	2_2	
+sendfile(2)	2_2	
+setresgid(2)	2_2	
+setresuid(2)	2_2	
+sigaltstack(2)	2_2	
+umount2(2)	2_2	
+utrap_install(2)	2_2	только для SPARC
+vfork(2)	2_2	
+pciconfig_iobase(2)	2_2_15; 2_4	не в x86
+getdents64(2)	2_4	
+getegid32(2)	2_4	
+geteuid32(2)	2_4	
+getgid32(2)	2_4	
+getgroups32(2)	2_4	
+getresgid32(2)	2_4	
+getresuid32(2)	2_4	
+getuid32(2)	2_4	
+madvise(2)	2_4	
+mincore(2)	2_4	
+mmap2(2)	2_4	
+perfmonctl(2)	2_4	ia64
+pivot_root(2)	2_4	
+setfsgid32(2)	2_4	
+setfsuid32(2)	2_4	
+setgid32(2)	2_4	
+setgroups32(2)	2_4	
+setregid32(2)	2_4	
+setresgid32(2)	2_4	
+setresuid32(2)	2_4	
+setreuid32(2)	2_4	
+setuid32(2)	2_4	
+ugetrlimit(2)	2_4	
+gettid(2)	2_4_11	
+readahead(2)	2_4_13	
+alloc_hugepages(2)	2_5_36	удалён в 2_5_44
+free_hugepages(2)	2_5_36	удалён в 2_5_44
+clock_getres(2)	2_6	
+clock_gettime(2)	2_6	
+clock_nanosleep(2)	2_6	
+clock_settime(2)	2_6	
+epoll_create(2)	2_6	
+epoll_ctl(2)	2_6	
+epoll_wait(2)	2_6	
+exit_group(2)	2_6	
+fadvise64(2)	2_6	
+fadvise64_64(2)	2_6	
+futex(2)	2_6	
+get_thread_area(2)	2_6	
+io_cancel(2)	2_6	
+io_destroy(2)	2_6	
+io_getevents(2)	2_6	
+io_setup(2)	2_6	
+io_submit(2)	2_6	
+lookup_dcookie(2)	2_6	
+remap_file_pages(2)	2_6	устарел начиная с 3_16
+restart_syscall(2)	2_6	
+sched_getaffinity(2)	2_6	
+sched_setaffinity(2)	2_6	
+set_thread_area(2)	2_6	
+set_tid_address(2)	2_6	
+tgkill(2)	2_6	
+timer_create(2)	2_6	
+timer_delete(2)	2_6	
+timer_getoverrun(2)	2_6	
+timer_gettime(2)	2_6	
+timer_settime(2)	2_6	
+waitid(2)	2_6_10	
+add_key(2)	2_6_11	
+keyctl(2)	2_6_11	
+request_key(2)	2_6_11	
+inotify_add_watch(2)	2_6_13	
+inotify_init(2)	2_6_13	
+inotify_rm_watch(2)	2_6_13	
+ioprio_get(2)	2_6_13	
+ioprio_set(2)	2_6_13	
+kexec_load(2)	2_6_13	
+migrate_pages(2)	2_6_16	
+mknodat(2)	2_6_16	
+ppoll(2)	2_6_16	
+pselect6(2)	2_6_16	
+spu_create(2)	2_6_16	только для PowerPC
+spu_run(2)	2_6_16	только для PowerPC
+unshare(2)	2_6_16	
+get_robust_list(2)	2_6_17	
+set_robust_list(2)	2_6_17	
+splice(2)	2_6_17	
+sync_file_range(2)	2_6_17	
+tee(2)	2_6_17	
+vmsplice(2)	2_6_17	
+move_pages(2)	2_6_18	
+epoll_pwait(2)	2_6_19	
+getcpu(2)	2_6_19	
+ppc_rtas(2)	2_6_2	Только для PowerPC
+eventfd(2)	2_6_22	
+signalfd(2)	2_6_22	
+sync_file_range2(2)	2_6_22	
+fallocate(2)	2_6_23	
+subpage_prot(2)	2_6_25	только для PowerPC
+timerfd_create(2)	2_6_25	
+timerfd_gettime(2)	2_6_25	
+timerfd_settime(2)	2_6_25	
+dup3(2)	2_6_27	
+epoll_create1(2)	2_6_27	
+eventfd2(2)	2_6_27	
+inotify_init1(2)	2_6_27	
+pipe2(2)	2_6_27	
+signalfd4(2)	2_6_27	
+accept4(2)	2_6_28	
+perf_event_open(2)	2_6_31	Был perf_counter_open() в 2_6_31; в 2_6_32 переименовано
+rt_tgsigqueueinfo(2)	2_6_31	
+recvmmsg(2)	2_6_33	
+prlimit64(2)	2_6_36	
+fanotify_init(2)	2_6_37	
+fanotify_mark(2)	2_6_37	
+clock_adjtime(2)	2_6_39	
+name_to_handle_at(2)	2_6_39	
+open_by_handle_at(2)	2_6_39	
+syncfs(2)	2_6_39	
+get_mempolicy(2)	2_6_6	
+mbind(2)	2_6_6	
+mq_getsetattr(2)	2_6_6	
+mq_notify(2)	2_6_6	
+mq_open(2)	2_6_6	
+mq_timedreceive(2)	2_6_6	
+mq_timedsend(2)	2_6_6	
+set_mempolicy(2)	2_6_6	
+fgetxattr(2)	2_6; 2_4_18	
+flistxattr(2)	2_6; 2_4_18	
+fremovexattr(2)	2_6; 2_4_18	
+fsetxattr(2)	2_6; 2_4_18	
+getxattr(2)	2_6; 2_4_18	
+lgetxattr(2)	2_6; 2_4_18	
+listxattr(2)	2_6; 2_4_18	
+llistxattr(2)	2_6; 2_4_18	
+lremovexattr(2)	2_6; 2_4_18	
+lsetxattr(2)	2_6; 2_4_18	
+removexattr(2)	2_6; 2_4_18	
+setxattr(2)	2_6; 2_4_18	
+sendfile64(2)	2_6; 2_4_19	
+semtimedop(2)	2_6; 2_4_22	
+tkill(2)	2_6; 2_4_22	
+sendmmsg(2)	3_0	
+setns(2)	3_0	
+sched_getattr(2)	3_14	
+sched_setattr(2)	3_14	
+getrandom(2)	3_17	
+kexec_file_load(2)	3_17	
+memfd_create(2)	3_17	
+seccomp(2)	3_17	
+bpf(2)	3_18	
+execveat(2)	3_19	
+s390_pci_mmio_read(2)	3_19	только для s390
+s390_pci_mmio_write(2)	3_19	только для s390
+process_vm_readv(2)	3_2	
+process_vm_writev(2)	3_2	
+kcmp(2)	3_5	
+kern_features(2)	3_7	Sparc64
+s390_runtime_instr(2)	3_7	только для s390
+finit_module(2)	3_8	
+userfaultfd(2)	4_2	
+mlock2(2)	4_4	
+Системный вызов  	Ядро	Примечания
