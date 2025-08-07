@@ -7,7 +7,7 @@
 
 static jmp_buf jump_buffer;
 // static volatile sig_atomic_t 
-int jump_ready = 0;
+static volatile int jump_ready = 0;
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 
 void handler(int sig) {
@@ -23,6 +23,20 @@ void handler(int sig) {
 
 void * thread2(void *){
 	printf("thread2 start reading\n");
+
+    sigset_t oset;
+    if(pthread_sigmask(SIG_SETMASK, NULL, &oset)!=0){
+        printf("thread2: error pthread_sigmask()\n");
+    }
+    else{
+        printf("thread2: next signals are disabled\n");
+        if (sigismember(&oset, SIGUSR1))        printf(" SIGUSR1(%d) ",SIGUSR1);
+        if (sigismember(&oset, SIGINT))        printf(" SIGINT(%d) ",SIGINT);
+        if (sigismember(&oset, SIGQUIT))        printf(" SIGQUIT(%d) ",SIGQUIT);
+        if (sigismember(&oset, SIGUSR1))        printf(" SIGUSR1(%d) ",SIGUSR1);
+        if (sigismember(&oset, SIGALRM))        printf(" SIGALRM(%d) ",SIGALRM);
+    }
+
 	pthread_mutex_lock(&mut); // lock 1
     if (setjmp(jump_buffer) == 0) {
         jump_ready = 1;  // Помечаем, что теперь можно прыгать
@@ -55,7 +69,7 @@ int main(){
 	printf("main exit\n");
 
 	// int saved_fd0 = dup(0);     // скопируем stdin
-	// fclose(stdin);              // закроем FILE* и fd 0
+	//fclose(stdin);              // закроем FILE* и fd 0
 	// dup2(saved_fd0, 0);         // восстановим fd 0
 	// close(saved_fd0);           // закрываем временный дубликат
 	// stdin = fdopen(0, "r");     // создаём новый FILE* поверх fd 0
